@@ -14,69 +14,21 @@ servers:
   # - url: "http://192.168.29.18:4000/"
   #   description: LOCAL SERVER 2
 security:
-  - JWT: []
+  - jwtAuth: []
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
 paths:
-
 # GET API FOR SPECIFIC ROOM ID
-  /getroom/{id}:
-    get:
-      security:
-        - JWT: []
-      
-      summary: Specific Room Detail by it's Room ID
-      description: Whole detail of Room by It's Room Id given in Prameter
-
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-      responses:
-        '200':
-          description: Whole Detail of Requestion Room ID
-          content:
-            application/json:
-              schema:
-                type: object
-
-  /login:
-    post:
-      summary: Login User with User name and password
-      requestBody:
-        description: in Request Body have to give username and Password
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-      responses:
-        '200':
-          description: Response for whether user is valid or not and if Valid will Ge JWT Token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                  message:
-                    type: string
-                  token:
-                    type: string
-                
-
 
   /register:
     post:
       security:
-        - JWT: []
+        - jwtAuth: []
       
       summary: Regitering new User in Database.
       requestBody:
@@ -114,12 +66,43 @@ paths:
                   message:
                     type: string
             
+  /login:
+    post:
+      summary: Login User with User name and password
+      requestBody:
+        description: in Request Body have to give username and Password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Response for whether user is valid or not and if Valid will Ge JWT Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                  message:
+                    type: string
+                  token:
+                    type: string
+                
+
 
   /getrooms:
   # GET API
     get:
       security:
-        - JWT: []
+        - jwtAuth: []
       
       summary: Getting All Rooms details
       description: All rooms details will be provided in Array of Objects
@@ -132,12 +115,38 @@ paths:
               schema:
                 type: object
 
+
+  /getroom/{id}:
+    get:
+      security:
+        - jwtAuth: []
+      
+      summary: Specific Room Detail by it's Room ID
+      description: Whole detail of Room by It's Room Id given in Prameter
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Whole Detail of Requestion Room ID
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+
+
   
   # POST API
   /addroom:
     post:
       security:
-        - JWT: []
+        - jwtAuth: []
       
       summary: Adds new Room into Database.
       description: Adding Fields => Department, Schedule, Year, RoomNumber, subject  in Database.

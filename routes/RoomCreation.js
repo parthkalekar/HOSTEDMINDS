@@ -6,9 +6,22 @@ const bcrypt = require("bcrypt");
 const salt = 10;
 
 const jwt = require("jsonwebtoken");
+const SECRET_KEY = "sijfbiudsfiobdsfmd mwdifjw93r8pgh po";
 
-function verifyToken(req,res,next) {
-  
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  console.log(token);
+  if (token) {
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err) {
+        return res.sendStatus(403); // Forbidden
+      }
+      req.user = user;
+      next();
+    });
+  } else {
+    res.sendStatus(401); // Unauthorized
+  }
 }
 
 router.post("/register", async (req, res) => {
@@ -18,6 +31,7 @@ router.post("/register", async (req, res) => {
       message: "Database Connection Failed...",
     });
   }
+
   let firstname = req.body.firstname;
   let middlename = req.body.middlename;
   let lastname = req.body.lastname;
@@ -26,7 +40,7 @@ router.post("/register", async (req, res) => {
   let username = req.body.username;
 
   if (
-    firstname &&
+    firstname  &&
     middlename &&
     lastname &&
     rollno &&
@@ -57,6 +71,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+
 router.post("/login", async (req, res) => {
   try {
     let check = await User.findAll({
@@ -65,9 +80,9 @@ router.post("/login", async (req, res) => {
     if (check) {
       data = check[0].get();
       if (await bcrypt.compare(req.body.password, data.password)) {
-        await jwt.sign(data, "SECRET_KEY", (err, token) => {
+        await jwt.sign(data, SECRET_KEY,'500s', (err, token) => {
           if (err) {
-            res.json({result:false, message:"Error Creating token..."});
+            res.json({ result: false, message: "Error Creating token..." });
           } else {
             res.json({ result: true, token: token });
           }
@@ -83,7 +98,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/addroom", async (req, res) => {
+router.post("/addroom", verifyToken, async (req, res) => {
   if (testConnection()) {
     let department = req.body.department;
     let schedule = req.body.schedule;
@@ -125,7 +140,7 @@ router.post("/addroom", async (req, res) => {
   }
 });
 
-router.get("/getroom/:id", async (req, res) => {
+router.get("/getroom/:id", verifyToken, async (req, res) => {
   let roomNo = req.params.id;
   let data = await Room.findOne({ where: { roomnumber: roomNo } });
   if (data) {
@@ -135,7 +150,7 @@ router.get("/getroom/:id", async (req, res) => {
   }
 });
 
-router.get("/getrooms", async (req, res) => {
+router.get("/getrooms", verifyToken, async (req, res) => {
   let rooms = await Room.findAll({});
   if (rooms) {
     res.json(rooms);
