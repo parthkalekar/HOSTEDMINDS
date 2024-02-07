@@ -1,0 +1,177 @@
+openapi: "3.0.0"
+info:
+  title: Room Creation API SWAGGER
+  description: This is Our Room Creation API Documentation
+  version: 1.0.0
+  contact:
+    email: i.parthkalekar@hostedminds.com
+  license:
+    name: HOSTEDMINDS
+    url: "https://hostedminds.com/"
+servers:
+  - url: "http://192.168.29.18:4000/"
+    description: LOCAL SERVER 1
+  # - url: "http://192.168.29.18:4000/"
+  #   description: LOCAL SERVER 2
+security:
+  - JWT: []
+
+paths:
+
+# GET API FOR SPECIFIC ROOM ID
+  /getroom/{id}:
+    get:
+      security:
+        - JWT: []
+      
+      summary: Specific Room Detail by it's Room ID
+      description: Whole detail of Room by It's Room Id given in Prameter
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Whole Detail of Requestion Room ID
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /login:
+    post:
+      summary: Login User with User name and password
+      requestBody:
+        description: in Request Body have to give username and Password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Response for whether user is valid or not and if Valid will Ge JWT Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                  message:
+                    type: string
+                  token:
+                    type: string
+                
+
+
+  /register:
+    post:
+      security:
+        - JWT: []
+      
+      summary: Regitering new User in Database.
+      requestBody:
+        description: Sending Credentials to Database with User details
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                middlename:
+                  type: string
+                lastname:
+                  type: string
+                rollno:
+                  type: integer
+                address:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Result of Registration was complete or not ?
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                  message:
+                    type: string
+            
+
+  /getrooms:
+  # GET API
+    get:
+      security:
+        - JWT: []
+      
+      summary: Getting All Rooms details
+      description: All rooms details will be provided in Array of Objects
+
+      responses:
+        '200':
+          description: Successfully Fetched
+          content:
+            application/json:
+              schema:
+                type: object
+
+  
+  # POST API
+  /addroom:
+    post:
+      security:
+        - JWT: []
+      
+      summary: Adds new Room into Database.
+      description: Adding Fields => Department, Schedule, Year, RoomNumber, subject  in Database.
+      requestBody:
+        description: Getting Room Data to be Inserted to Database.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department:
+                  type: string
+                schedule:
+                  type: string
+                year:
+                  type: string
+                roomNumber:
+                  type: integer
+                subject:
+                  type: string      
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                  message:
+                    type: string
+
+
+                  
+
